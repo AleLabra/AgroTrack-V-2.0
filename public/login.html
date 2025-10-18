@@ -2,29 +2,33 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="estilos.css" />
   <title>AgroTrack - Login</title>
 </head>
 <body>
-  <header class="site">
+  <!-- Header pastel con navegación -->
+  <header class="site" role="banner">
     <div class="inner">
-      <div class="brand"><div class="logo"></div> AgroTrack</div>
-      <nav>
+      <div class="brand"><div class="logo" aria-hidden="true"></div> AgroTrack</div>
+      <nav aria-label="Navegación principal">
         <a href="/">Inicio</a>
         <a href="productos.html">Productos</a>
         <a href="contacto.html">Contacto</a>
-        <a href="login.html">Login</a>
+        <a aria-current="page" href="login.html">Login</a>
       </nav>
     </div>
   </header>
 
-  <div class="container">
-    <div class="card" style="max-width:520px;margin-inline:auto">
-      <h1>Iniciar sesión</h1>
+  <main class="container">
+    <section class="card card-narrow" aria-labelledby="titulo-login">
+      <h1 id="titulo-login">Iniciar sesión</h1>
       <p>Acceso de demostración. Ingresá tus credenciales para probar el flujo.</p>
 
-      <form action="/auth/recuperar" method="POST" novalidate>
+      <!-- Contenedor de errores en página (mejor UX que alert) -->
+      <div id="formError" class="notice error hidden" role="alert" aria-live="polite"></div>
+      <!-- Form principal (action se setea dinámicamente para apuntar al backend) -->
+      <form id="loginForm" method="POST" novalidate>
         <div>
           <label for="usuario">Usuario o correo</label>
           <input
@@ -33,14 +37,16 @@
             name="usuario"
             placeholder="Ej: juan.perez o juan@mail.com"
             autocomplete="username"
-            required
             inputmode="email"
+            spellcheck="false"
+            required
+            minlength="3"
           />
         </div>
 
         <div>
           <label for="clave">Clave</label>
-          <div style="position:relative">
+          <div class="field-with-button">
             <input
               type="password"
               id="clave"
@@ -50,58 +56,90 @@
               required
               minlength="4"
             />
+            <!-- Toggle accesible: aria-pressed y aria-controls -->
             <button
               type="button"
-              aria-label="Mostrar u ocultar clave"
               id="toggleClave"
-              class="btn outline"
-              style="position:absolute;right:6px;top:6px;padding:6px 10px"
+              class="btn outline btn-inline"
+              aria-label="Mostrar u ocultar clave"
+              aria-controls="clave"
+              aria-pressed="false"
+              title="Mostrar/Ocultar contraseña"
             >Ver</button>
           </div>
-          <small class="help">Por seguridad, evita usar tu clave real (esto es un entorno de práctica).</small>
+          <small class="help">No uses una clave real (entorno de práctica).</small>
         </div>
 
-        <div class="row" style="align-items:center">
-          <label style="display:flex;align-items:center;gap:.5rem">
-            <input type="checkbox" id="remember" />
+        <div class="row items-center">
+          <label class="flex-center">
+            <input type="checkbox" id="remember" name="remember" />
             Mantener sesión (demo)
           </label>
           <a class="btn outline" href="/">Cancelar</a>
-          <button class="btn" type="submit">Ingresar</button>
+          <button id="btnLogin" class="btn" type="submit">Ingresar</button>
         </div>
 
-        <p style="margin-top:10px">
-          <a href="contacto.html">¿Necesitás ayuda?</a>
-        </p>
+        <p class="mt-10"><a href="contacto.html">¿Necesitás ayuda?</a></p>
       </form>
-    </div>
+    </section>
 
-    <div class="footer">
+    <footer class="footer">
       &copy; 2025 AgroTrack — Acceso demostrativo.
-    </div>
-  </div>
+    </footer>
+  </main>
 
   <script>
-    // Toggle de visibilidad de la clave
-    const input = document.getElementById('clave');
-    const btn = document.getElementById('toggleClave');
-    btn?.addEventListener('click', () => {
-      const isPwd = input.type === 'password';
-      input.type = isPwd ? 'text' : 'password';
-      btn.textContent = isPwd ? 'Ocultar' : 'Ver';
-      input.focus();
-    });
+    // ---- 1) Envío siempre al backend, aunque abras con :5500 (Live Server) ----
+    (function () {
+      const form = document.getElementById('loginForm');
+      if (!form) return;
+      const DEFAULT_BACKEND_PORT = '8888';
+      // Si navegás en :8888 ya estás en el backend; si no, forzamos :8888
+      const port = (location.port && location.port !== DEFAULT_BACKEND_PORT)
+        ? DEFAULT_BACKEND_PORT
+        : (location.port || DEFAULT_BACKEND_PORT);
+      form.action = `http://${location.hostname}:${port}/auth/recuperar`;
+    })();
 
-    // Validación HTML5 suave (sin bloquear envío demo)
-    const form = document.querySelector('form');
-    form?.addEventListener('submit', (e) => {
-      const usuario = document.getElementById('usuario');
-      const clave = document.getElementById('clave');
-      if (!usuario.value.trim() || !clave.value.trim()) {
-        e.preventDefault();
-        alert('Completá usuario y clave para continuar.');
-      }
-    });
+    // ---- 2) Toggle accesible de visibilidad de la clave ----
+    (function () {
+      const input = document.getElementById('clave');
+      const btn = document.getElementById('toggleClave');
+      if (!input || !btn) return;
+
+      btn.addEventListener('click', () => {
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? 'Ocultar' : 'Ver';
+        btn.setAttribute('aria-pressed', String(show));
+        input.focus();
+      });
+    })();
+
+    // ---- 3) Validación suave + evitar doble submit ----
+    (function () {
+      const form = document.getElementById('loginForm');
+      const btn = document.getElementById('btnLogin');
+      const errorBox = document.getElementById('formError');
+
+      form.addEventListener('submit', (e) => {
+        const usuario = document.getElementById('usuario');
+        const clave = document.getElementById('clave');
+
+        // Validación mínima (el HTML5 hace el resto)
+        if (!usuario.value.trim() || !clave.value.trim()) {
+          e.preventDefault();
+          errorBox.style.display = '';
+          errorBox.textContent = 'Completá usuario y clave para continuar.';
+          usuario.focus();
+          return;
+        }
+
+        // Deshabilita para evitar doble click; feedback de carga
+        btn.disabled = true;
+        btn.textContent = 'Ingresando…';
+      });
+    })();
   </script>
 </body>
 </html>

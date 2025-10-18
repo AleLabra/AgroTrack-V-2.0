@@ -2,17 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Meta de descripción breve para SEO/compartido -->
+  <meta name="description" content="AgroTrack: portal interno con monitoreo de cultivos, trazabilidad y paneles de producción.">
   <link rel="stylesheet" href="estilos.css" />
   <title>AgroTrack - Inicio</title>
 </head>
 <body>
-  <!-- Header pastel formal -->
-  <header class="site">
+  <!-- Enlace de salto para accesibilidad (ir directo al contenido) -->
+  <a class="sr-only" href="#contenido">Saltar al contenido principal</a>
+
+  <!-- Header pastel con navegación principal -->
+  <header class="site" role="banner">
     <div class="inner">
-      <div class="brand"><div class="logo" aria-hidden="true"></div> AgroTrack</div>
-      <nav>
-        <a href="/">Inicio</a>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        AgroTrack
+      </div>
+
+      <!-- Nav semántico con aria-label y página actual marcada -->
+      <nav aria-label="Navegación principal">
+        <a aria-current="page" href="/">Inicio</a>
         <a href="productos.html">Productos</a>
         <a href="contacto.html">Contacto</a>
         <a href="login.html">Login</a>
@@ -20,16 +30,18 @@
     </div>
   </header>
 
-  <main>
-    <!-- Hero -->
-    <section class="container">
-      <div class="card" style="padding:32px">
-        <h1>Innovación tecnológica para el agro</h1>
+  <!-- Contenido principal -->
+  <main id="contenido">
+    <!-- Hero: mensaje principal + CTAs -->
+    <section class="container" aria-labelledby="hero-title">
+      <div class="card card-hero">
+        <h1 id="hero-title">Innovación tecnológica para el agro</h1>
         <p>
           Portal interno para productores y equipos: consultá información, enviá consultas
           y probá el acceso de demostración en un entorno simple y seguro.
         </p>
-        <div class="row" style="margin-top:10px">
+
+        <div class="row mt-10" role="group" aria-label="Acciones principales">
           <a class="btn" href="productos.html">Ver productos</a>
           <a class="btn mint" href="contacto.html">Hacer una consulta</a>
           <a class="btn outline" href="login.html">Login de demostración</a>
@@ -37,31 +49,34 @@
       </div>
     </section>
 
-    <!-- Accesos rápidos / features -->
-    <section class="container">
+    <!-- Accesos rápidos / features (3 tarjetas) -->
+    <section class="container" aria-labelledby="features-title">
+      <h2 id="features-title" class="sr-only">Características principales</h2>
       <div class="row">
-        <div class="col card">
+        <article class="col card">
           <h2>Monitoreo de cultivos</h2>
           <p>Indicadores clave y reportes en un vistazo para mejorar decisiones en campo.</p>
           <a class="btn outline" href="productos.html">Conocer más</a>
-        </div>
-        <div class="col card">
+        </article>
+
+        <article class="col card">
           <h2>Trazabilidad</h2>
           <p>Registro de lotes, procesos y envíos con cumplimiento normativo.</p>
           <a class="btn outline" href="productos.html">Conocer más</a>
-        </div>
-        <div class="col card">
+        </article>
+
+        <article class="col card">
           <h2>Panel de producción</h2>
           <p>Dashboard con métricas de rendimiento e integración con Excel/BI.</p>
           <a class="btn outline" href="productos.html">Conocer más</a>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- Bloque informativo -->
-    <section class="container">
+    <!-- Bloque informativo / CTA secundario -->
+    <section class="container" aria-labelledby="cta-title">
       <div class="card">
-        <h2>¿Cómo podemos ayudarte?</h2>
+        <h2 id="cta-title">¿Cómo podemos ayudarte?</h2>
         <p>
           Escribinos para coordinar una demo, solicitar una adaptación a tu operación
           o recibir un informe de evaluación inicial sin costo.
@@ -71,10 +86,12 @@
     </section>
   </main>
 
-  <div class="container">
-    <div class="footer">
-      &copy; 2025 AgroTrack — Portal interno | Privacidad · Términos
-    </div>
+  <!-- Footer coherente con el resto del sitio -->
+ <footer class="container">
+  <div class="footer">
+    &copy; 2025 AgroTrack — Portal interno ·
+    <a class="btn outline btn-xs" href="contacto.html">Contacto</a>
   </div>
+</footer>
 </body>
 </html>
