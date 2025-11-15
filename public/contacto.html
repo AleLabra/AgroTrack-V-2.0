@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="estilos.css" />
+  <title>AgroTrack - Contacto</title>
+</head>
+<body>
+
+  <header class="site">
+    <div class="inner">
+      <div class="brand"><div class="logo" aria-hidden="true"></div> AgroTrack</div>
+      <nav aria-label="Principal">
+        <a href="/">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a aria-current="page" href="contacto.html">Contacto</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Principal del formulario -->
+    <section class="card" aria-labelledby="titulo-contacto">
+      <h1 id="titulo-contacto">Contacto</h1>
+      <p id="ayuda-contacto">
+        ¿Tenés una consulta o querés más información sobre nuestras soluciones?
+        Completá el formulario y te responderemos a la brevedad.
+      </p>
+
+      <!--
+        Queda el action vacío y lo resuelvo dinámicamente con JS
+        para que funcione tanto si abrís con :8888 como si usás Live Server :5500.".
+      -->
+      <form id="contactoForm" method="POST" class="contact-form" aria-describedby="ayuda-contacto">
+             <div class="sr-only" aria-hidden="true">
+              <label for="empresa">Empresa (dejar vacío)</label>
+              <input type="text" id="empresa" name="empresa" tabindex="-1" autocomplete="off" />
+               </div>
+                 <!--campo de control antispam-->
+        <div class="row">
+          <div class="col">
+            <label for="nombre">Nombre completo</label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              placeholder="Ej: Juan Pérez"
+              autocomplete="name"
+              required
+              minlength="2"
+            />
+          </div>
+
+          <div class="col">
+            <label for="email">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="tunombre@mail.com"
+              autocomplete="email"
+              inputmode="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="mensaje">Mensaje</label>
+          <textarea
+            id="mensaje"
+            name="mensaje"
+            rows="6"
+            placeholder="Escribí tu consulta..."
+            required
+            minlength="10"
+            maxlength="1000"
+            aria-describedby="contador-mensaje"
+          ></textarea>
+          <!-- Contador de caracteres-->
+          <div id="contador-mensaje" class="help">0 / 1000 caracteres</div>
+        </div>
+
+        <div class="row items-center">
+          <button id="btnSubmit" class="btn mint" type="submit">Enviar mensaje</button>
+          <a class="btn outline" href="/contacto/listar">Ver consultas previas</a>
+          <a class="btn outline" href="/">Volver al inicio</a>
+        </div>
+
+        <!-- Mensaje de error cliente (se muestra si el JS detecta problema) -->
+       <p id="formError" class="help hidden" role="alert"></p>
+      </form>
+
+      <small class="help">
+        Tu información será utilizada únicamente para responder tu consulta.
+        No compartimos tus datos con terceros.
+      </small>
+    </section>
+
+    <footer class="footer">
+      &copy; 2025 AgroTrack | Innovación tecnológica para el agro.
+    </footer>
+  </main>
+
+  <script>
+     //--- Configuración dinámica del action para que el POST siempre vaya al backend --->
+    (function () {
+      const form = document.getElementById('contactoForm');
+      if (!form) return;
+
+      // Si abrís con :5500 (Live Server), igual enviamos al backend :8888
+      const backendPort = '8888';
+      const backend = `http://${location.hostname}:${backendPort}`;
+      form.action = `${backend}/contacto/cargar`;
+    })();
+
+    // --- UX: contador de caracteres del textarea ---
+    (function () {
+      const area = document.getElementById('mensaje');
+      const counter = document.getElementById('contador-mensaje');
+      if (!area || !counter) return;
+
+      const update = () => {
+        const len = area.value.length;
+        const max = area.getAttribute('maxlength') || 1000;
+        counter.textContent = `${len} / ${max} caracteres`;
+      };
+
+      area.addEventListener('input', update);
+      update();
+    })();
+
+    // --- bloqueo del botón para evitar doble envío ---
+    (function () {
+      const form = document.getElementById('contactoForm');
+      const btn = document.getElementById('btnSubmit');
+      const err = document.getElementById('formError');
+
+      form.addEventListener('submit', (e) => {
+        // Honeypot: si está completo, cancelamos 
+        const hp = document.getElementById('empresa');
+        if (hp && hp.value.trim() !== '') {
+          e.preventDefault();
+          return;
+        }
+
+        // Validación mínima adicional 
+        const nombre = document.getElementById('nombre').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const mensaje = document.getElementById('mensaje').value.trim();
+
+        if (!nombre || !email || mensaje.length < 10) {
+          e.preventDefault();
+          err.style.display = '';
+          err.textContent = 'Revisá los datos: completá nombre, email y un mensaje de al menos 10 caracteres.';
+          return;
+        }
+
+        // Deshabilitamos el botón para evitar múltiples envíos
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Enviada - AgroTrack</title>
+    <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="titulo">¡Gracias por tu consulta!</h1>
+        <p>Tu mensaje fue recibido correctamente. Te responderemos a la brevedad.</p>
+
+        <div class="success-box">
+            <p><strong>Nombre:</strong> <%= nombre %></p>
+            <p><strong>Email:</strong> <%= email %></p>
+            <p><strong>Mensaje:</strong></p>
+            <p class="mensaje"><%= mensaje %></p>
+        </div>
+
+        <div class="acciones">
+            <a href="/" class="btn">Volver al inicio</a>
+            <a href="/contacto/listar" class="btn btn-secundario">Ver todas las consultas</a>
+        </div>
+    </div>
+</body>
+</html>

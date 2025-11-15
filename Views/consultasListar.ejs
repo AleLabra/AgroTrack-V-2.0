@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas Recibidas - AgroTrack</title>
+    <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="titulo">Consultas Recibidas</h1>
+
+        <% if (consultas && consultas.length > 0) { %>
+            <div class="consultas-box">
+                <pre class="consultas-pre"><%- contenido %></pre>
+            </div>
+        <% } else { %>
+            <p class="sin-consultas">Aún no hay consultas registradas.</p>
+        <% } %>
+
+        <div class="acciones">
+            <a href="/" class="btn">Volver al inicio</a>
+            <a href="/contacto.html" class="btn btn-secundario">Nueva consulta</a>
+        </div>
+    </div>
+</body>
+</html>
